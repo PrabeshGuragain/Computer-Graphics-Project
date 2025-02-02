@@ -71,8 +71,8 @@ class EquationGrapher:
         # Initialize pygame and OpenGL
         pygame.init()
         display_info = pygame.display.Info()
-        self.width = int(display_info.current_w * 0.9)
-        self.height = int(display_info.current_h * 0.9)
+        self.width = int(width)
+        self.height = int(height)
         self.screen = pygame.display.set_mode((self.width, self.height), DOUBLEBUF | OPENGL | RESIZABLE)
         pygame.display.set_caption("Dynamic Equation Grapher")
         
@@ -81,7 +81,7 @@ class EquationGrapher:
         self.font = pygame.font.SysFont('arial', 14)
         
         # View settings
-        self.zoom = 10.0
+        self.zoom = 10.0 
         self.x_offset = 0.0
         self.y_offset = 0.0
         
@@ -146,7 +146,7 @@ class EquationGrapher:
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
         aspect_ratio = self.width / self.height
-        if aspect_ratio > 1:
+        if (aspect_ratio > 1):
             gluOrtho2D(-self.zoom * aspect_ratio + self.x_offset, 
                        self.zoom * aspect_ratio + self.x_offset, 
                        -self.zoom + self.y_offset, 
@@ -301,9 +301,14 @@ class EquationGrapher:
         glColor3f(*color)
         
         # Adjust number of points based on zoom level
-        num_points = max(1000, int(2000 * self.zoom / 10))
+        num_points = int(1000 * self.zoom)  # More points when zoomed in
         step = (2 * self.zoom) / num_points
         x_start = -self.zoom + self.x_offset
+        
+        aspect_ratio = self.width / self.height
+        if aspect_ratio > 1:
+            x_start *= aspect_ratio
+            step *= aspect_ratio
         
         points = []
         current_strip = []
@@ -359,7 +364,7 @@ class EquationGrapher:
             "Click checkboxes to show/hide equations\n"
             "Press Ctrl+Delete to clear all equations and shapes\n"
             "Example equations: x^2, sin(x), x^3 - 2*x\n"
-            "Example shapes: shape:circle:0:0:5, shape:rectangle:-1:-1:1:1, shape:line:-5:0:5:0"
+            "Example shapes: shape:circle:0:0:5"
         )
         print(help_text)
         self.show_message(help_text, True, duration=10000, color=(0, 0, 0))  # Black color for help message
@@ -506,5 +511,5 @@ if __name__ == "__main__":
     print("Click checkboxes to show/hide equations")
     print("Press Ctrl+Delete to clear all equations and shapes")
     print("Example equations: x^2, sin(x), x^3 - 2*x")
-    print("Example shapes: shape:circle:0:0:5, shape:rectangle:-1:-1:1:1, shape:line:-5:0:5:0")
+    print("Example shapes: shape:circle:0:0:5")
     grapher.run()
